@@ -1,5 +1,4 @@
 import urllib2
-from urllib2 import urlopen
 import bs4 as bs
 
 file = open('FightersToScrape.txt')
