@@ -14,11 +14,10 @@ for link in links:
     fightHistoryTable = soup.find_all('table',{'class':'wikitable'})
     # Get the fighters name (as listed on Wikipedia)
     fighterName = soup.find('h1',{'id':'firstHeading'}).text
-    
+    fightHistoryTable = fightHistoryTable[1]
     # print historyTableAttr[0].prettify()
 
     # print(fighterName)
-    fightHistoryTable = fightHistoryTable[0]
     str = ''
     for row in fightHistoryTable.find_all('tr'):
         for cell in row.find_all('td'):
