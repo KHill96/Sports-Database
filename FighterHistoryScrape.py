@@ -11,34 +11,47 @@ for link in links:
     soup = bs.BeautifulSoup(html,'lxml')
 
     # Return every table with "wikitable" in it's classnames
-    fightHistoryTable = soup.find_all('table',{'class':'wikitable'})
+    fighterTables = soup.find_all('table',{'class':'wikitable'})
     # Get the fighters name (as listed on Wikipedia)
     fighterName = soup.find('h1',{'id':'firstHeading'}).text
-    fightHistoryTable = fightHistoryTable[1]
+    fighterTables = (fighterTables[0],fighterTables[1])
     # print historyTableAttr[0].prettify()
+    for table in fighterTables:
+        # print(fighterName)
+        if(fighterTables.index(table) == 0):
+            str = ''
+            for row in table.find_all('tr'):
+                for cell in row.find_all('td'):
+                    str = str + u"{}".format((((cell.text)).replace('\n','')))
+                    str = str + ', '
+                    str = str.replace(u'\u2013','-')
+            # Encode to avoid errors
+            str = str.encode('ascii', 'ignore').decode('ascii')
+            str = str.replace(' ,' , ',')
+            fileName = fighterName + ' Record.txt'
+            with open(fileName,'w') as r:
+                r.write(str)
 
-    # print(fighterName)
-    str = ''
-    for row in fightHistoryTable.find_all('tr'):
-        for cell in row.find_all('td'):
-            str = str + u"{}".format((((cell.text)).replace('\n','')))
-            str = str + ', '
-            str = str.replace(u'\u2013','-')
-    # Encode to avoid errors
-    str = str.encode('ascii', 'ignore').decode('ascii')
+        else:
+            str = ''
+            for row in table.find_all('tr'):
+                for cell in row.find_all('td'):
+                    str = str + u"{}".format((((cell.text)).replace('\n','')))
+                    str = str + ', '
+                    str = str.replace(u'\u2013','-')
+            # Encode to avoid errors
+            str = str.encode('ascii', 'ignore').decode('ascii')
 
-    #Formatting
-    str = str.replace(' Win,', '\nWin,')
-    str = str.replace(' Loss', '\nLoss')
-    str = str.replace(' Draw', '\nDraw')
-    str = str.replace(',  ', ',')
-    str = str.replace(', ', ',')
-    str = str.replace(',,', ',')
-
-    # print(str)
-
-    fileName = fighterName + '.txt'
-    with open(fileName,'w') as r:
-        r.write(str)
+            #Formatting
+            str = str.replace(' Win,', '\nWin,')
+            str = str.replace(' Loss', '\nLoss')
+            str = str.replace(' Draw', '\nDraw')
+            str = str.replace(',  ', ',')
+            str = str.replace(', ', ',')
+            str = str.replace(',,', ',')
+            fileName = fighterName + '.txt'
+            with open(fileName,'w') as r:
+                r.write(str)
+        # print(str)
 
     print (fighterName + ' data done')
