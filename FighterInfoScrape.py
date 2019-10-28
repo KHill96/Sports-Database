@@ -4,7 +4,7 @@ import bs4 as bs
 file = open('FightersToScrape.txt')
 links = file.readlines()
 for link in links:
-    # Replace Link for each fighter
+    # Replace Link for each fighter, read it, and prep to scrape it
     url = link
     html = urllib2.urlopen(url).read()
     soup = bs.BeautifulSoup(html,'lxml')
@@ -13,8 +13,29 @@ for link in links:
     fighterTables = soup.find_all('table',{'class':'wikitable'})
     # Get the fighters name (as listed on Wikipedia)
     fighterName = soup.find('h1',{'id':'firstHeading'}).text
+    # For their record and fight history I only need to use the first two tables
     fighterTables = (fighterTables[0],fighterTables[1])
-    # print historyTableAttr[0].prettify()
+    # Get the table holding their general information
+    fighterInfoTable = soup.find('table',class_='infobox vcard')
+    # Get their name as listed on wikipedia
+    fighterName = soup.find('h1',{'id':'firstHeading'}).text
+
+    # Get their general info
+    str = ''
+    for row in fighterInfoTable.find_all('tr'):
+        for cell in row.find_all('td'):
+            str = str + u"{}".format((((cell.text)).replace('\n','')))
+            str = str + ', '
+            str = str.replace(u'\u2013','-')
+    # Encode to avoid errors
+    str = str.encode('ascii', 'ignore').decode('ascii')
+    str = str.replace(' ,' , ',')
+    # Write the info to a txt file
+    fileName = fighterName + ' General Info.txt'
+    with open(fileName,'w') as r:
+        r.write(str)
+
+    # Go through the tables for their record and fight history
     for table in fighterTables:
         # print(fighterName)
         if(fighterTables.index(table) == 0):
@@ -27,6 +48,7 @@ for link in links:
             # Encode to avoid errors
             str = str.encode('ascii', 'ignore').decode('ascii')
             str = str.replace(' ,' , ',')
+            # Write to txt file
             fileName = fighterName + ' Record.txt'
             with open(fileName,'w') as r:
                 r.write(str)
@@ -48,9 +70,10 @@ for link in links:
             str = str.replace(',  ', ',')
             str = str.replace(', ', ',')
             str = str.replace(',,', ',')
-            fileName = fighterName + '.txt'
+            # Write to txt file
+            fileName = fighterName + ' Fight History.txt'
             with open(fileName,'w') as r:
                 r.write(str)
-        # print(str)
 
     print (fighterName + ' data done')
+
