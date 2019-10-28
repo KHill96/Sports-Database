@@ -16,7 +16,7 @@ for link in links:
     # For their record and fight history I only need to use the first two tables
     fighterTables = (fighterTables[0],fighterTables[1])
     # Get the table holding their general information
-    fighterInfoTable = soup.find('table',class_='infobox vcard')
+    fighterInfoTable = soup.find('table',class_='infobox')
     # Get their name as listed on wikipedia
     fighterName = soup.find('h1',{'id':'firstHeading'}).text
 
@@ -74,6 +74,6 @@ for link in links:
             fileName = fighterName + ' Fight History.txt'
             with open(fileName,'w') as r:
                 r.write(str)
-
+    # Let me know the fighter's info is collected
     print (fighterName + ' data done')
 
