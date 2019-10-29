@@ -12,13 +12,12 @@ for link in links:
     # Return every table with "wikitable" in it's classnames
     fighterTables = soup.find_all('table',{'class':'wikitable'})
     # Get the fighters name (as listed on Wikipedia)
-    fighterName = soup.find('h1',{'id':'firstHeading'}).text
+    fighterName = soup.find('h1').text
     # For their record and fight history I only need to use the first two tables
     fighterTables = (fighterTables[0],fighterTables[1])
     # Get the table holding their general information
     fighterInfoTable = soup.find('table',class_='infobox')
     # Get their name as listed on wikipedia
-    fighterName = soup.find('h1',{'id':'firstHeading'}).text
 
     # Get their general info
     str = ''
@@ -76,4 +75,3 @@ for link in links:
                 r.write(str)
     # Let me know the fighter's info is collected
     print (fighterName + ' data done')
-
