@@ -5,9 +5,7 @@ import pandas
 
 def main():
     # Links to the types of stats I want to scrape
-    links = ['https://www.basketball-reference.com/leagues/NBA_{}_totals.html',
-            'https://www.basketball-reference.com/leagues/NBA_{}_per_game.html'
-            ,'https://www.basketball-reference.com/leagues/NBA_{}_per_minute.html'
+    links = ['https://www.basketball-reference.com/leagues/NBA_{}_totals.html'
             ,'https://www.basketball-reference.com/leagues/NBA_{}_per_poss.html']
 
     # Create a list of years from 1974 to 2019 since the 2019-2020 only just got started a few weeks ago
@@ -34,5 +32,6 @@ def main():
             fileName = fileName.replace('.html','')
             fileName = fileName +'.csv'
             stats.to_csv(fileName,index=False)
+        print(str(year) + ' done')
 
 main()
