@@ -3,7 +3,7 @@
 
 
 # Sports-Database
-As a way of learning more about building and managing a database I decided to make my own using sports using boxing, mixed martial arts, and basketball to start.
+As a way of learning more about database management, data analytics, and learning new skills (Node.JS, BeautifulSoup, Flask, Postgres, etc.) I decided to build a 
 
 # How I collected the data
 I decide to use web scraping as a way to get the data. It made more sense than manually going in and doing data entry for so many fighters.
