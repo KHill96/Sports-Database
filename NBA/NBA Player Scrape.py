@@ -30,5 +30,5 @@ def main():
 
     # Put the frames together
     pandas.concat(frames).to_csv('Players.csv',index=False)
-    
+    print("Got all NBA Players")
 main()
