@@ -1,37 +1,58 @@
-# Libraries imported/used
+# Imports
 from urllib.request import urlopen
 from bs4 import BeautifulSoup as bs
 import pandas
+import threading
+
+def totalStats_Scrape(yearList = [], *args):
+    fullList = pandas.DataFrame()
+    for year in yearList:
+        url = 'https://www.basketball-reference.com/leagues/NBA_{}_totals.html'.format(year)
+        html = urlopen(url)
+        soup = bs(html,'html.parser')
+        table = soup.find('table',{'id':'totals_stats'})
+        # header = [table.find('tr').findAll('th')]
+        rows = table.findAll('tr')
+        header = [th.getText() for th in rows[0].findAll('th')]
+        header = header[1:]
+        rows = rows[1:]
+        totalStats = [[td.getText() for td in rows[i].findAll('td')] for i in range(len(rows))]
+        totalStats = pandas.DataFrame(totalStats, columns=header)
+        totalStats.insert(0,'Season',year)
+        fullList = fullList.append(totalStats,sort=False)
+    print('Total Stats done')
+    fileName = 'Total Stats.csv'
+    fullList.to_csv(fileName,index=False)
+
+def per100Stats_Scrape(yearList = [], *args):
+    fullList = pandas.DataFrame()
+    for year in yearList:
+        url ='https://www.basketball-reference.com/leagues/NBA_{}_per_poss.html'.format(year)        
+        html = urlopen(url)
+        soup = bs(html,'html.parser')
+        table = soup.find('table',{'id':'per_poss_stats'})
+        # header = [table.find('tr').findAll('th')]
+        rows = table.findAll('tr')
+        header = [th.getText() for th in rows[0].findAll('th')]
+        header = header[1:]
+        rows = rows[1:]
+        totalStats = [[td.getText() for td in rows[i].findAll('td')] for i in range(len(rows))]
+        totalStats = pandas.DataFrame(totalStats, columns=header)
+        totalStats.insert(0,'Season',year)
+        fullList = fullList.append(totalStats,sort=False)
+    print('Per 100 Stats done')
+    fileName = 'Per 100 Stats.csv'
+    fullList.to_csv(fileName,index=False)
 
 def main():
-    # Links to the types of stats I want to scrape
-    links = ['https://www.basketball-reference.com/leagues/NBA_{}_totals.html'
-            ,'https://www.basketball-reference.com/leagues/NBA_{}_per_poss.html']
-
     # Create a list of years from 1974 to 2019 since the 2019-2020 only just got started a few weeks ago
     yearList = []
     yearList.extend(range(1974,2020))
-    for year in yearList:
-        for link in links:
-            #Replace the {} characters with the year
-            link = link.format(year)
 
-            # Get the html to scrape
-            html = urlopen(link)
-            soup = bs(html,'html.parser')
-
-            #Name the columns of the csv
-            headerRow = [th.getText() for th in soup.findAll('tr', limit=2)[0].findAll('th')]
-            headerRow = headerRow[1:]
-            # Get the data using findAll
-            rows = soup.findAll('tr')[1:]
-            stats = [[td.getText() for td in rows[i].findAll('td')]for i in range(len(rows))]
-            stats = pandas.DataFrame(stats,columns= headerRow)
-            fileName = link[link.rfind('NBA'):].replace('_',' ')
-            # Cleanup the file name and create the csv
-            fileName = fileName.replace('.html','')
-            fileName = fileName +'.csv'
-            stats.to_csv(fileName,index=False)
-        print(str(year) + ' done')
+    # I'm using threads so it wont take double the time. They can scrape concurrently
+    totalStatsThread = threading.Thread(target=totalStats_Scrape,args=(yearList,))
+    per100StatsThread = threading.Thread(target=per100Stats_Scrape,args=(yearList,))
+    totalStatsThread.start()
+    per100StatsThread.start()
 
 main()
