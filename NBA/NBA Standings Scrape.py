@@ -44,6 +44,7 @@ def standingsScrape(yearList = [], *args):
 
 def main():
     yearList = []
+    # Plan on changing to 2021 once the season is over
     yearList.extend(range(1974,2020))
     standingsScrape(yearList)
     
