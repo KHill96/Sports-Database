@@ -20,6 +20,7 @@ def totalStats_Scrape(yearList = [], *args):
         totalStats = pandas.DataFrame(totalStats, columns=header)
         totalStats.insert(0,'Season',year)
         fullList = fullList.append(totalStats,sort=False)
+        print('{} total stats done'.format(year))
     print('Total Stats done')
     fileName = 'Total Stats.csv'
     fullList.to_csv(fileName,index=False)
@@ -40,6 +41,7 @@ def per100Stats_Scrape(yearList = [], *args):
         totalStats = pandas.DataFrame(totalStats, columns=header)
         totalStats.insert(0,'Season',year)
         fullList = fullList.append(totalStats,sort=False)
+        print('{} per 100 done'.format(year))
     print('Per 100 Stats done')
     fileName = 'Per 100 Stats.csv'
     fullList.to_csv(fileName,index=False)
@@ -47,7 +49,7 @@ def per100Stats_Scrape(yearList = [], *args):
 def main():
     # Create a list of years from 1974 to 2019 since the 2019-2020 only just got started a few weeks ago
     yearList = []
-    yearList.extend(range(1974,2020))
+    yearList.extend(range(1974,2021))
 
     # I'm using threads so it wont take double the time. They can scrape concurrently
     totalStatsThread = threading.Thread(target=totalStats_Scrape,args=(yearList,))
