@@ -3,10 +3,10 @@
 ***PostgreSQL***
 ***Docker***
 
-**Note: I would've done Boxing and MMA as a bigger set but the way I planned it was too much for me to do on my own without completely losing my mind going through the data, frying my laptop running the script to get the data, or destorying my CPU trying to put them into excel and my PostgreSQL database.***
+**Note: Boxing and MMA are a little bit trickier to do because wikipedia isn't exactly consistent in the way it formats the tables for the athletes' records. So until I find a work-around to that the data set will be missing them***
 
 # About the Project:
-I had decided to recreate the site sports-reference.com as a way to practice full stack development. On sports-reference, the toolbar at the top will link a sport to their respective site (i.e. Basketball to basketball-reference). I wanted to eliminate the redirect and just have every site on one application and domain.
+I decided to create a dataset for the sports I follow using different python libraries. Originally I wanted to create a clone of [sports-reference.com](https://www.sports-reference.com/). But I scaled back the project because I lost interest in it and wanted to focus on data collection and web scraping instead.
 
 # Recent updates
-I'm currently migrating the data from my laptop to a server i've set up at home. I didn't want to use AWS or similar services due to "budget constraints". This should take some time since I have other projects I'm working on at the moment.
+My laptop is in the shop so until I get it back the project is stalled. I also have school responsibilities to updates are guarenteed to be slow.
