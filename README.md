@@ -13,3 +13,7 @@ You'll be able to see the scripts I wrote to get the stats and where I got them 
 
 # Recent updates
 I just got my laptop back so progresss will resume once I switch my OS from Windows 10 to Ubuntu 20.04 LTS. That'll happen later today.
+
+# TODO:
+BJJ / Grappling records from BJJ Heroes
+Figuring out how I plan to navigate wikipedia's inconsistent tables.
