@@ -8,5 +8,8 @@
 # About the Project:
 I decided to create a dataset for the sports I follow using different python libraries. Originally I wanted to create a clone of [sports-reference.com](https://www.sports-reference.com/). But I scaled back the project because I lost interest in it and wanted to focus on data collection and web scraping instead.
 
+# What you can find in the repository
+You'll be able to see the scripts I wrote to get the stats and where I got them from. I also included some SQL queries that set up part of the database.
+
 # Recent updates
-My laptop is in the shop so until I get it back the project is stalled. I also have school responsibilities to updates are guarenteed to be slow.
+My laptop is in the shop so until I get it back the project is stalled. I also have school responsibilities to updates are guarenteed to be slow. Once my laptop is fixed I'll set up a database server using PostgreSQL and docker.
