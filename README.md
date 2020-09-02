@@ -12,4 +12,4 @@ I decided to create a dataset for the sports I follow using different python lib
 You'll be able to see the scripts I wrote to get the stats and where I got them from. I also included some SQL queries that set up part of the database.
 
 # Recent updates
-My laptop is in the shop so until I get it back the project is stalled. I also have school responsibilities to updates are guarenteed to be slow. Once my laptop is fixed I'll set up a database server using PostgreSQL and docker.
+I just got my laptop back so progresss will resume once I switch my OS from Windows 10 to Ubuntu 20.04 LTS. That'll happen later today.
