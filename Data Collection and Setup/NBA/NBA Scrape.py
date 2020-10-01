@@ -29,32 +29,49 @@ def player_scrape():
         info = pandas.DataFrame([[td.getText() for td in rows[i].findAll(['td','th'])]for i in range(len(rows))],columns=col_row)
         full_list = full_list.append(info,sort=False)
         print('[Player Info Scrape]{} - Finished with players that have a last name starting with {}'.format(time.strftime("%H:%M:%S",time.localtime()),letter))
-    full_list = full_list.dropna()
+    # full_list = full_list.dropna()
     full_list.insert(0,'Player ID',range(100,100+len(full_list)))
     full_list.to_csv('NBA Players.csv',index=False)
     print('[Player Info Scrape]{} - Finished scraping and exporting the player information'.format(time.strftime("%H:%M:%S",time.localtime())))
 
-def total_stats_scrape(year_list):
-    full_list = pandas.DataFrame()
-    for year in year_list:
-        print('[Total Stats Scrape] Starting to scrape the totals for the {} season'.format(year))
-        url = 'https://www.basketball-reference.com/leagues/NBA_{}_totals.html'.format(year)
-        html = urlopen(url)
-        soup = bs(html,'html.parser')
-        table = soup.find('table',{'id':'totals_stats'})
-        # header = [table.find('tr').findAll('th')]
-        rows = table.findAll('tr')
-        header = [th.getText() for th in rows[0].findAll('th')]
-        header = header[1:]
-        rows = rows[1:]
-        total_stats = [[td.getText() for td in rows[i].findAll('td')] for i in range(len(rows))]
-        total_stats = pandas.DataFrame(total_stats, columns=header)
-        total_stats.insert(0,'Season',year)
-        full_list = full_list.append(total_stats,sort=False)
-        print('[Total Stats Scrape]{} - Finished scraping the totals for the {} season'.format(time.strftime("%H:%M:%S",time.localtime()), year))
-    full_list = full_list.dropna()
-    full_list.to_csv('NBA Total Stats.csv',index=False)
-    print('[Total Stats Scrape]{} - Finished scraping and exporting the total stats'.format(time.strftime("%H:%M:%S",time.localtime())))
+
+# Stats Scrape
+def stats_scrape(year_list,links,output_tag):
+    regular_season_frame = pandas.DataFrame()
+    playoffs_frame = pandas.DataFrame()
+    for link in links:
+        for year in year_list:
+            html = urlopen(link.format(year))
+            soup = bs(html,'html.parser')
+            # If the url is for the total stats
+            if ('totals' in link): table = soup.find('table',{'id':'totals_stats'})
+            # Otherwise the link poins to the per 100 possessions
+            else: table = soup.find('table',{'id':'per_poss_stats'})
+            rows = table.findAll('tr')
+            header = [th.getText() for th in rows[0].findAll('th')][1:]
+            rows = rows[1:]
+            # stats = [[td.getText() for td in rows[i].findAll('td')] for i in range(len(rows))]
+            stats = []
+            for i in range(len(rows)):
+                data = []
+                for td in rows[i].findAll('td'):
+                    data.append(td.getText())
+                stats.append(data)
+            stats = pandas.DataFrame(stats,columns=header)
+            stats = stats.dropna()
+            stats.insert(0,'Season',year)
+            if 'playoffs' in link:
+                playoffs_frame = playoffs_frame.append(stats,sort=False)
+            else:
+                regular_season_frame = regular_season_frame.append(stats,sort=False)
+            print('{} Finished scraping stats for the {} season'.format(output_tag,year))
+    if 'Per 100' in output_tag:
+        regular_season_frame.to_csv('Per 100 Stats Regular Season.csv',index=False)
+        playoffs_frame.to_csv('Per 100 Stats Playoffs',index=False)
+    else:
+        regular_season_frame.to_csv('Total Stats Regular Season.csv',index=False)
+        playoffs_frame.to_csv('Total Stats Playoffs.csv',index=False)
+        
 
 
 # Standings Scrape
@@ -138,41 +155,19 @@ def standings_scrape(year_list):
     bubble_season.to_csv('NBA Bubble Standings.csv',index=False)
     print('[Standings Scrape]{} - Finished scraping and exporting all of the standings'.format(time.strftime("%H:%M:%S",time.localtime())))
 
-def per_100_stats_scrape(year_list):
-    full_list = pandas.DataFrame()
-    print('[Per 100 Scrape]{} - Starting to scrape the per 100 stats'.format(time.strftime("%H:%M:%S",time.localtime())))
-    for year in year_list:
-        print('[Per 100 Scrape]{} - Starting to scrape the totals for the {} season'.format(time.strftime("%H:%M:%S",time.localtime()),year))
-        url ='https://www.basketball-reference.com/leagues/NBA_{}_per_poss.html'.format(year)        
-        html = urlopen(url)
-        soup = bs(html,'html.parser')
-        table = soup.find('table',{'id':'per_poss_stats'})
-        # header = [table.find('tr').findAll('th')]
-        rows = table.findAll('tr')
-        header = [th.getText() for th in rows[0].findAll('th')]
-        header = header[1:]
-        rows = rows[1:]
-        total_stats = [[td.getText() for td in rows[i].findAll('td')] for i in range(len(rows))]
-        total_stats = pandas.DataFrame(total_stats, columns=header)
-        total_stats.insert(0,'Season',year)
-        full_list = full_list.append(total_stats,sort=False)    
-        print('[Per 100 Scrape]{} - Finished scraping the totals for the {} season'.format(time.strftime("%H:%M:%S",time.localtime()),year))
-    full_list = full_list.dropna()
-    full_list.to_csv('NBA Per 100 Stats.csv',index=False)
-    print('[Per 100 Scrape]{} - Finished scraping and exporting the per 100 stats'.format(time.strftime("%H:%M:%S",time.localtime())))
 
 def main():
     year_list = []
     year_list.extend(range(1974,2021))
     # Multi-threaded to kill the level of total runtime outside of the standings taking so long
-    total_stats_thread = threading.Thread(target=total_stats_scrape,args=(year_list,))
-    per_100_stats_thread = threading.Thread(target=per_100_stats_scrape,args=(year_list,))
+    total_stats_thread = threading.Thread(target=stats_scrape,args=(year_list,['https://www.basketball-reference.com/leagues/NBA_{}_totals.html','https://www.basketball-reference.com/playoffs/NBA_{}_totals.html'],'[Totals]'))
+    per_100_stats_thread = threading.Thread(target=stats_scrape,args=(year_list,['https://www.basketball-reference.com/leagues/NBA_{}_per_poss.html','https://www.basketball-reference.com/playoffs/NBA_{}_per_poss.html'],'[Per 100]'))
     player_thread = threading.Thread(target=player_scrape)
-    standings_thread = threading.Thread(target=standings_scrape,args=(year_list,))
+    # standings_thread = threading.Thread(target=standings_scrape,args=(year_list,))
     total_stats_thread.start()
     per_100_stats_thread.start()
     player_thread.start()
-    standings_thread.start()
+    # standings_thread.start()
 
 if __name__ == "__main__":
     main()
