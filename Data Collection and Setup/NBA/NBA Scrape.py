@@ -16,10 +16,10 @@ def player_scrape():
     # The player index uses the players last initial as the index
     player_starting_letters = list(string.ascii_lowercase)
     # Go through each letters index and get the player information
-    print('[Player Info Scrape]{} - Starting the players scrape'.format(time.strftime("%H:%M:%S",time.localtime())))
+    print('[NBA Players]{} - Starting the players scrape'.format(time.strftime("%H:%M:%S",time.localtime())))
     for letter in player_starting_letters:
         # Create the link and start scraping
-        print('[Player Info Scrape]{} - Starting with players that have a last name starting with {}'.format(time.strftime("%H:%M:%S",time.localtime()),letter))
+        print('[NBA Players]{} - Starting with players that have a last name starting with {}'.format(time.strftime("%H:%M:%S",time.localtime()),letter))
         link = 'https://www.basketball-reference.com/players/{}/'.format(letter)
         html = urlopen(link)
         soup = bs(html, 'html.parser')
@@ -28,11 +28,11 @@ def player_scrape():
         rows = soup.findAll('tr')[1:]
         info = pandas.DataFrame([[td.getText() for td in rows[i].findAll(['td','th'])]for i in range(len(rows))],columns=col_row)
         full_list = full_list.append(info,sort=False)
-        print('[Player Info Scrape]{} - Finished with players that have a last name starting with {}'.format(time.strftime("%H:%M:%S",time.localtime()),letter))
+        print('[NBA Players]{} - Finished with players that have a last name starting with {}'.format(time.strftime("%H:%M:%S",time.localtime()),letter))
     # full_list = full_list.dropna()
     full_list.insert(0,'Player ID',range(100,100+len(full_list)))
     full_list.to_csv('NBA Players.csv',index=False)
-    print('[Player Info Scrape]{} - Finished scraping and exporting the player information'.format(time.strftime("%H:%M:%S",time.localtime())))
+    print('[NBA Players]{} - Finished scraping and exporting the player information'.format(time.strftime("%H:%M:%S",time.localtime())))
 
 
 # Stats Scrape
@@ -66,11 +66,11 @@ def stats_scrape(year_list,links,output_tag):
                 regular_season_frame = regular_season_frame.append(stats,sort=False)
             print('{} Finished scraping stats for the {} season'.format(output_tag,year))
     if 'Per 100' in output_tag:
-        regular_season_frame.to_csv('Per 100 Stats Regular Season.csv',index=False)
-        playoffs_frame.to_csv('Per 100 Stats Playoffs',index=False)
+        regular_season_frame.to_csv('NBA Per 100 Stats Regular Season.csv',index=False)
+        playoffs_frame.to_csv('NBA Per 100 Stats Playoffs.csv',index=False)
     else:
-        regular_season_frame.to_csv('Total Stats Regular Season.csv',index=False)
-        playoffs_frame.to_csv('Total Stats Playoffs.csv',index=False)
+        regular_season_frame.to_csv('NBA Total Stats Regular Season.csv',index=False)
+        playoffs_frame.to_csv('NBA Total Stats Playoffs.csv',index=False)
         
 
 
@@ -163,11 +163,11 @@ def main():
     total_stats_thread = threading.Thread(target=stats_scrape,args=(year_list,['https://www.basketball-reference.com/leagues/NBA_{}_totals.html','https://www.basketball-reference.com/playoffs/NBA_{}_totals.html'],'[Totals]'))
     per_100_stats_thread = threading.Thread(target=stats_scrape,args=(year_list,['https://www.basketball-reference.com/leagues/NBA_{}_per_poss.html','https://www.basketball-reference.com/playoffs/NBA_{}_per_poss.html'],'[Per 100]'))
     player_thread = threading.Thread(target=player_scrape)
-    # standings_thread = threading.Thread(target=standings_scrape,args=(year_list,))
+    standings_thread = threading.Thread(target=standings_scrape,args=(year_list,))
     total_stats_thread.start()
     per_100_stats_thread.start()
     player_thread.start()
-    # standings_thread.start()
+    standings_thread.start()
 
 if __name__ == "__main__":
     main()
